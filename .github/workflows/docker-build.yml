@@ -1,23 +1,29 @@
-name: Build and Push Docker Image
+name: Build and Push Docker Image  # Tämä on workflowin nimi GitHubin Actions-välilehdellä
 
 on:
   push:
     branches:
-      - main
+      - main  # Workflow käynnistyy aina kun koodia pusketaan "main"-haaraan
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest  # Workflow ajetaan Ubuntu-virtuaalikoneessa
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v3  # Lataa projektin GitHub-reposta workflow-ympäristöön
 
       - name: Log in to DockerHub
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+        run: |
+          echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+        # Kirjautuu DockerHubiin käyttämällä GitHub-secreteissä tallennettuja tunnuksia
 
       - name: Build Docker image
-        run: docker build -t ${{ secrets.DOCKER_USERNAME }}/react-docker-app .
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/react-docker-app .
+        # Rakentaa Docker-kuvan projektin juuresta ja nimeää sen käyttäjänimen mukaan
 
       - name: Push Docker image to DockerHub
-        run: docker push ${{ secrets.DOCKER_USERNAME }}/react-docker-app
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/react-docker-app
+      # Julkaisee kuvan DockerHubiin automaattisesti
